@@ -4,12 +4,12 @@ title: About
 permalink: /about/
 ---
 
-Some information about you!
+Well as you might have noticed I am Frank Thomson and working as Data Scientist at ICT Automatisering. I am working on several interesting projects often involving a lot of data. Part of the knowledge gained during work I apply to hobby projects, which you can find here. Of course this also works the other way around.
 
 ### More Information
 
-A place to include any other types of information that you'd like to include about yourself.
+When I am not behind my desk I like to participate in road racing events (with bikes) and have a decent meal afterwards.
 
 ### Contact me
 
-[email@domain.com](mailto:email@domain.com)
+The best way to contact me is thought linkedin.
