@@ -12,4 +12,5 @@ You will probably think, why is this guy talking about bitcoin while the title c
 This post describes the steps I took to create the calculator and how you can use it.
 
 ### Data collection
-To be able to predict the net hash rate and daily ether to miners I needed data. I ran a quick search on google but could not find a recent full dump of the ether chain, which made me decide to collect it myself. To do this I downloaded geth and started the ether chain synchronization process. It took a while to get the almost 4M blocks but once I had them I could start the data collection. With 'geth --rpc --rpccorsdomain localhost' I started a local instance of the rpc client which enabled me to very quickly cummunicate with the chain
+To be able to predict the net hash rate and daily ether to miners I needed data. I ran a quick search on google but could not find a recent full dump of the ether chain, which made me decide to collect it myself. To do this I downloaded geth and started the ether chain synchronization process. It took a while to get the almost 4M blocks but once I had them I could start the data collection. With the command below I started a local instance of the rpc client which enabled me to very quickly communicate with the chain.
+ 'geth --rpc --rpccorsdomain localhost'
