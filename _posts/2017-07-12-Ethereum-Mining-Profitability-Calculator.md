@@ -3,6 +3,7 @@ layout: post
 title: Ether mining profitability calculator
 ---
 ![dashboard]({{ site.baseurl }}/images/dashboard.PNG "dashboard")
+[Go to dashboard](https://ethereum.shinyapps.io/dashboard/)
 
 ### Introduction
 A long time ago I purchased a Butterfly Labs rig to mine Bitcoin. During that time I lived in a student house for which the rent included energy costs. This seemed like a perfect deal and a quick calculation showed that I would earn my investment back in just a matter of weeks. However, at that point the difficulty started to increase significantly and each day that passed shifted my break even date with two days. For this you do not need to be an economist to see that the break even date would never come. So after a while I decided to sell the mining rig and just invest it in bitcoin.
