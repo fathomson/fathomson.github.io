@@ -11,8 +11,9 @@ You will probably think, why is this guy talking about bitcoin while the title c
 This post describes the steps I took to create the calculator and how you can use it.
 
 ### Data collection and preparation
+----
 [Source data collection](https://github.com/fathomson/Ether-mining-profitability-calculator/blob/master/data_prep.R)
-To be able to predict the net hash rate and daily ether to miners I needed data. I ran a quick search on google but could not find a recent full dump of the ether chain, which made me decide to collect it myself. To do this I downloaded geth and started the ether chain synchronization process. It took a while to get the 4M+ blocks but once I had them I could start the data collection. With the command below I started a local instance of the rpc client which enabled me to very quickly communicate with the chain. I used R to retrieve the block data from the chain and saved it to sql with R as well.
+To be able to predict the net hash rate and daily ether to miners I needed data. I ran a quick search on google but could not find a recent full dump of the ether chain, which made me decide to collect it myself. To do this I downloaded geth and started the ether chain synchronization process. It took a while to get the 4M+ blocks but once I had them I could start the data collection. With the command below I started a local instance of the rpc client which enabled me to very quickly communicate with the chain. I used R to retrieve the block data from the chain and saved it to sql with R as well.  
 `geth --rpc --rpccorsdomain localhost`
 
 ##### Net hash rate
@@ -27,13 +28,15 @@ This is the total amount of ether rewarded to all the miners per day. As a miner
 The total ether rewarded to the miners is between 5 and 14 ether, there are some exceptions though. i.e. block number 2770908 which has a total of 766 ether. If you are interested have a look at [30 biggest blockrewards](https://github.com/fathomson/Ether-mining-profitability-calculator/blob/master/dashboard/data/top30_block_eth_rewards.csv).
 
 ### The dashboard
+----
 The data collection and preparation was done in R as well as the forecasting and visualizations. These however where not production ready yet and needed additional work. Recently I came across [shinyapps.io](https://www.shinyapps.io/), a relatively simple tool to create well looking dashboards in R and wanted to give it a go. It went quicker then I thought and within no time I had published my calculator/dashboard on shinyapp.io, see [Ether mining profitability calculator](https://ethereum.shinyapps.io/dashboard/).
 
 ##### How do I use the calculator/dashboard?
 The dashboard is divided in two sections, an input section at the left and tabs with output on the middle/right. In the input section you can enter your hashrate and investment cost. Click on 'Show advanced options' to change the days to forecast, date of investment, ether sell price, energy consumption and energy price. If you are a cloud miner you can set the energy price to 0. Based on the values you provided this app calculates the expected ROI and ether mined after the forecasted period. You can use the chart to see your returns at an earlier date. You can zoom in by selecting a specific period in the chart, double clicking resets your zoom.  
 In the output sections you can see three tabs: ROI, Net hash rate forecast and Daily ether to miners. The ROI (return on invesment) tab shows the rate at which you are earning money. The net hash rate forecast tab show you a forecast of the predicted future hashrate. The daily ether to miners tab show you the predicted amount of ether which is rewarded to the miners.
 
-### Useful notes
+### Useful links
+----
 [Project source code](https://github.com/fathomson/Ether-mining-profitability-calculator)  
 [Report issues](https://github.com/fathomson/Ether-mining-profitability-calculator/issues)  
 [Questions/contact](https://www.linkedin.com/in/fathomson/)  
