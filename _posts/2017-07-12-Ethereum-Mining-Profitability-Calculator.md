@@ -4,6 +4,7 @@ title: Ether mining profitability calculator
 date: 2017-07-12 18:30:13 +0800
 category: R
 tags: R shinyapps ethereum dashboard
+comments: TRUE
 ---
 [Directly go to dashboard](https://ethereum.shinyapps.io/dashboard/)
 

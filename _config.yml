@@ -13,7 +13,7 @@
 # you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
-title: Hobby projects and blogs
+title: Technical blog about R, block chain and more
 description: This site is used for hobby projects about which I write now and then.
 baseurl: ""
 url: "https://fathomson.github.io/"

@@ -12,4 +12,4 @@ When I am not behind my desk I like to participate in road racing events (with b
 
 ### Contact me
 
-The best way to contact me is thought linkedin.
+The best way to contact me is thought [LinkedIn](https://www.linkedin.com/in/fathomson/).
