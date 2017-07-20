@@ -22,7 +22,7 @@ repository: fathomson/fathomson.github.io
 paginate: 5
 
 # theme specific configurations
-github_profile: "https://github.com/fathomson"
+github_profile: "https://fathomson.github.io"
 user: "Frank Thomson"
 user_email: "Data Scientist ICT GROUP"
 contact_url: "https://goo.gl/hYCr58"
