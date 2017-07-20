@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+      
+      Hobby projects and blogs
+      
+    </title>
+    <link rel="shortcut icon" type="image/x-icon" href="/assets/res/favicon.ico">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/css/materialize.min.css">
+    <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="/assets/css/main.css">
+    
+    
+    <link rel="stylesheet" href="/assets/css/page.css">
+    
+    
+    
+    
+    <link rel="stylesheet" href="/assets/css/index.css">
+    
+    
+    <link rel="stylesheet" href="/assets/css/syntax.css">
+    <link rel="alternate" type="application/rss+xml" title="RSS" href="/feed.xml">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
+    <!-- Begin Jekyll SEO tag v2.2.3 -->
+<meta property="og:title" content="Hobby projects and blogs" />
+<meta name="author" content="Frank Thomson" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="This site is used for hobby projects about which I write now and then." />
+<meta property="og:description" content="This site is used for hobby projects about which I write now and then." />
+<link rel="canonical" href="http://localhost:4000/" />
+<meta property="og:url" content="http://localhost:4000/" />
+<meta property="og:site_name" content="Hobby projects and blogs" />
+<meta name="google-site-verification" content="UA-101946097-1" />
+<script type="application/ld+json">
+{"@context":"http://schema.org","@type":"WebSite","name":"Hobby projects and blogs","headline":"Hobby projects and blogs","author":{"@type":"Person","name":"Frank Thomson"},"description":"This site is used for hobby projects about which I write now and then.","url":"http://localhost:4000/"}</script>
+<!-- End Jekyll SEO tag -->
+
+  </head>
+  <body>
+    <header>
+      <nav class="top-nav light-blue darken-2">
+        <div class="nav-wrapper">
+          <div class="container">
+            <a class="page-title" href="/">Hobby projects and blogs</a>
+          </div>
+        </div>
+      </nav>
+      <div class="container">
+        <a href="#" data-activates="slide-out" class="button-collapse top-nav full hide-on-large-only">
+          <i class="material-icons">menu</i>
+        </a>
+      </div>
+      <ul id="slide-out" class="side-nav fixed">
+        <li>
+          <div class="userView">
+            <div class="background"></div>
+            <a href="https://github.com/fathomson" target="_blank"><img class="circle z-depth-2" src="/assets/res/user.png"></a>
+            <span class="white-text name">Frank Thomson</span>
+            <span class="white-text email">Data Scientist ICT GROUP</span>
+          </div>
+        </li>
+        <li><a class="waves-effect" href="/"><i class="material-icons">home</i>Home</a></li>
+        <li><a class="waves-effect" href="/projects"><i class="material-icons">description</i>Projects</a></li>
+        <li><a class="waves-effect" href="/categories"><i class="material-icons">sort</i>Categories</a></li>
+        <li><a class="waves-effect" href="/tags"><i class="material-icons">label</i>Tags</a></li>
+        <li><a class="waves-effect" href="/feed.xml" target="_blank"><i class="material-icons">rss_feed</i>RSS</a></li>
+        <li><div class="divider"></div></li>
+        <li><a class="waves-effect" href="/about"><i class="material-icons">person</i>About</a></li>
+        <li><a class="waves-effect" href="/contact"><i class="material-icons">email</i>Contact</a></li>
+      </ul>
+    </header>
+    <main>
+
+
+<div class="container">
+  <div id="page-info">
+  <h3></h3>
+</div>
+<div class="row">
+  <div class="row">
+  
+  <div class="col s12">
+    <div class="card hoverable">
+      <div class="card-content">
+        <span id="post-title" class="card-title">Ether mining profitability calculator</span>
+        <p id="post-date">
+          <i class="material-icons">date_range</i>
+          12/07/2017 12:30
+        </p>
+        <p id="post-content"><a href="https://ethereum.shinyapps.io/dashboard/">Directly go to dashboard</a>
+
+<img src="assets/img/dashboard.PNG" width="100%" />
+
+<h3 id="introduction">Introduction</h3>
+A long time ago I purchased a Butterfly Labs rig to mine Bitcoin. During that time I lived in a student house for which the rent included energy costs. This seemed like a perfect deal and a quick calculation showed that I would earn my investment back in just a matter of weeks. However, at that point the difficulty started to increase significantly and each day that passed shifted my break even date with two days. For this you do not need to be an economist to see that the break even date would never come. So after a while I decided to sell the mining rig and just invest it in bitcoin.
+
+You will probably think, why is this guy talking about bitcoin while the title clearly states ether, well that is because of the following: since a few months ether is on a daily bases in the news. Some articles are about the recent price increase or about the opportunities and risks and even some about mining. And the articles about mining and cloud mining triggered me to build a reliable ether mining profitability calculator. As with the bitcoin story there are mining profitability calculators available, however these work with fixed or simple difficulty values. And with the current growth in net hash rate basically all these profitability calculators provide a too rosy image. That is why I build a profitability calculator which, based on the predicted net hash rate and daily ether to miner rewards, provides a realistic view of your investment returns.
+
+This post describes the steps I took to create the calculator and how you can use it.
+
+<h3 id="data-collection-and-preparation">Data collection and preparation</h3>
+<a href="https://github.com/fathomson/Ether-mining-profitability-calculator/blob/master/data_prep.R">Source data collection</a>
+To be able to predict the net hash rate and daily ether to miners I needed data. I ran a quick search on google but could not find a recent full dump of the ether chain, which made me decide to collect it myself. To do this I downloaded geth and started the ether chain synchronization process. It took a while to get the 4M+ blocks but once I had them I could start the data collection. With the command below I started a local instance of the rpc client which enabled me to very quickly communicate with the chain. I used R to retrieve the block data from the chain and saved it to sql with R as well.
+
+<figure class="highlight"><pre><code class="language-cmd" data-lang="cmd">geth --rpc --rpccorsdomain localhost</code></pre></figure>
+
+<h5 id="net-hash-rate">Net hash rate</h5>
+The net hash rate is the total hash rate of the network. A prediction of this value is important because the percentage of your attribution determines the number of ethers you get in a specific period. The block timestamp and difficulty are of interest for estimating the net hash rate. I divided the weighted difficulty (block difficulty * block time) by the mean block time for all blocks on a day to get an estimate of that days net hash rate. There might be  other ways to do this but for this application this works. Each day there are between 25.000 and 40.000 new blocks which provides sufficient data to do it this way.
+
+<h5 id="daily-ether-to-miners">Daily ether to miners</h5>
+This is the total amount of ether rewarded to all the miners per day. As a miner you can ether in several different ways, see this list below which includes all of the ways to earn ether:
+<ul>
+  <li>5 ether for a block found</li>
+  <li>4.375 to 1.25 with steps of .625 depending where the uncle is included ((U_n + 8 - B_n) * R / 8).</li>
+  <li>0.15625 for a found uncle block (1/32 * 5)</li>
+  <li>transactions fees
+The total ether rewarded to the miners is between 5 and 14 ether, there are some exceptions though. i.e. block number 2770908 which has a total of 766 ether. If you are interested have a look at <a href="https://github.com/fathomson/Ether-mining-profitability-calculator/blob/master/dashboard/data/top30_block_eth_rewards.csv">30 biggest blockrewards</a>.</li>
+</ul>
+
+<h3 id="the-dashboard">The dashboard</h3>
+The data collection and preparation was done in R as well as the forecasting and visualizations. These however where not production ready yet and needed additional work. Recently I came across <a href="https://www.shinyapps.io/">shinyapps.io</a>, a relatively simple tool to create well looking dashboards in R and wanted to give it a go. It went quicker then I thought and within no time I had published my calculator/dashboard on shinyapp.io, see <a href="https://ethereum.shinyapps.io/dashboard/">Ether mining profitability calculator</a>.
+
+<h5 id="how-do-i-use-the-calculatordashboard">How do I use the calculator/dashboard?</h5>
+The dashboard is divided in two sections, an input section at the left and tabs with output on the middle/right. In the input section you can enter your hashrate and investment cost. Click on ‘Show advanced options’ to change the days to forecast, date of investment, ether sell price, energy consumption and energy price. If you are a cloud miner you can set the energy price to 0. Based on the values you provided this app calculates the expected ROI and ether mined after the forecasted period. You can use the chart to see your returns at an earlier date. You can zoom in by selecting a specific period in the chart, double clicking resets your zoom.<br />
+In the output sections you can see three tabs: ROI, Net hash rate forecast and Daily ether to miners. The ROI (return on invesment) tab shows the rate at which you are earning money. The net hash rate forecast tab show you a forecast of the predicted future hashrate. The daily ether to miners tab show you the predicted amount of ether which is rewarded to the miners.
+
+<h5 id="useful-links">Useful links</h5>
+<a href="https://github.com/fathomson/Ether-mining-profitability-calculator">Project source code</a><br />
+<a href="https://github.com/fathomson/Ether-mining-profitability-calculator/issues">Report issues</a><br />
+<a href="https://www.linkedin.com/in/fathomson/">Questions/contact</a>
+</p>
+      </div>
+      <div class="card-action">
+        <a href="/2017/07/12/Ethereum-Mining-Profitability-Calculator">
+          Read More
+        </a>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col s12 center-align">
+    <ul class="pagination">
+      <li class="disabled">
+        
+        <a href="#!">
+        
+          <i class="material-icons">chevron_left</i>
+        </a>
+      </li>
+      
+      <li class="active light-blue darken-2">
+        <a href="#!">1</a>
+      
+      </li>
+      
+      <li class="disabled">
+        
+        <a href="#!">
+        
+          <i class="material-icons">chevron_right</i>
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+</div>
+</div>
+
+    </main>
+    <footer class="page-footer light-blue darken-4">
+      <div class="container">
+        <div class="row">
+          <div class="col s12">
+            <p class="grey-text text-lighten-4">This site is used for hobby projects about which I write now and then.</p>
+          </div>
+        </div>
+      </div>
+      <div class="footer-copyright">
+        <div class="container">
+          &#xA9; 2017 Hobby projects and blogs. All rights reserved. Theme by <a href="https://github.com/ShawnTeoh/matjek">MatJek</a>.
+        </div>
+      </div>
+    </footer>
+    <script src="//code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/js/materialize.min.js"></script>
+    
+    
+    
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})
+      (window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      ga('create', 'UA-101946097-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+    
+    <script src="/assets/js/main.js"></script>
+  </body>
+</html>
