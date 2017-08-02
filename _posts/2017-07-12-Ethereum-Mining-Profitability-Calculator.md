@@ -6,7 +6,7 @@ category: R
 tags: R shinyapps ethereum dashboard
 comments: TRUE
 ---
-[Directly go to dashboard](https://ethereum.shinyapps.io/dashboard/)
+[Directly go to dashboard](http://188.226.172.25:3838/Ether-mining-profitability-calculator/dashboard/)
 
 <img src="https://raw.githubusercontent.com/fathomson/fathomson.github.io/master/assets/img/dashboard.PNG" width="100%">
 
