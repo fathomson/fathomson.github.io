@@ -6,7 +6,7 @@ category: feedR
 tags: R shinyapps ethereum dashboard
 comments: TRUE
 ---
-<a href="https://ethereum.shinyapps.io/dashboard/"><img src="https://raw.githubusercontent.com/fathomson/fathomson.github.io/master/assets/img/dashboard.PNG" width="300px"></a>
+<a href="http://188.226.172.25:3838/Ether-mining-profitability-calculator/dashboard/"><img src="https://raw.githubusercontent.com/fathomson/fathomson.github.io/master/assets/img/dashboard.PNG" width="300px"></a>
 <br>
 The cryptocurrency Ethereum now reaches the news headlines on a daily basis. It has attracted a lot of new miners who often seek a way to earn a quick buck, but how profitable is the mining of this digital currency? To find out I walk you thought the steps I took to develop a profitability calculator dashboard. It consists out of two parts, the first part focusses on the data collection and preparation and in the second part I will handle the dashboard development.
 
