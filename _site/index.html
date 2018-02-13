@@ -25,7 +25,7 @@
     <link rel="stylesheet" href="/assets/css/syntax.css">
     <link rel="alternate" type="application/rss+xml" title="RSS" href="/feed.xml">
     <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
-    <!-- Begin Jekyll SEO tag v2.2.3 -->
+    <!-- Begin Jekyll SEO tag v2.3.0 -->
 <meta property="og:title" content="Technical blog about R, block chain and more" />
 <meta name="author" content="Frank Thomson" />
 <meta property="og:locale" content="en_US" />
@@ -36,7 +36,7 @@
 <meta property="og:site_name" content="Technical blog about R, block chain and more" />
 <meta name="google-site-verification" content="UA-101946097-1" />
 <script type="application/ld+json">
-{"@context":"http://schema.org","@type":"WebSite","name":"Technical blog about R, block chain and more","headline":"Technical blog about R, block chain and more","author":{"@type":"Person","name":"Frank Thomson"},"description":"This site is used for hobby projects about which I write now and then.","url":"http://localhost:4000/"}</script>
+{"name":"Technical blog about R, block chain and more","description":"This site is used for hobby projects about which I write now and then.","author":{"@type":"Person","name":"Frank Thomson"},"@type":"WebSite","url":"http://localhost:4000/","publisher":null,"image":null,"headline":"Technical blog about R, block chain and more","dateModified":null,"datePublished":null,"sameAs":null,"mainEntityOfPage":null,"@context":"http://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
   </head>
@@ -84,379 +84,37 @@
   <div class="col s12">
     <div class="card hoverable">
       <div class="card-content">
+        <span id="post-title" class="card-title">Crypto, python, dash - Year on year price changes</span>
+        <p id="post-date">
+          <i class="material-icons">date_range</i>
+          13/02/2018 02:00
+        </p>
+        <p id="post-content"><a href="http://www.coins-alarm.com:8050/cpc"><img src="https://raw.githubusercontent.com/fathomson/fathomson.github.io/master/assets/img/dashboard_cpc.PNG" width="300px" /></a>
+<br />
+The prices of crypto have always been subject to severe price fluctuations, which is logical since there is no centralized authority to stabilize the prices. You might be familiar with the <a href="https://bravenewcoin.com/assets/Uploads/four-stages-chart.jpg">hype cycle</a> which perfectly describes the evolvement stages of emerging technologies. Not surprisingly, the crypto prices can be fit to the hype cycle too. A lot has been written about that already and this post will no go there but only focus on the developed dashboard.
+
+</p>
+      </div>
+      <div class="card-action">
+        <a href="/2018/02/13/Crypto,-python,-dash-Year-on-year-price-changes">
+          Read More
+        </a>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col s12">
+    <div class="card hoverable">
+      <div class="card-content">
         <span id="post-title" class="card-title">R, ethereum, shinyapps - Profitability dashboard part 1 of 2</span>
         <p id="post-date">
           <i class="material-icons">date_range</i>
           20/07/2017 12:30
         </p>
-        <p id="post-content"><a href="https://ethereum.shinyapps.io/dashboard/"><img src="https://raw.githubusercontent.com/fathomson/fathomson.github.io/master/assets/img/dashboard.PNG" width="300px" /></a>
+        <p id="post-content"><a href="http://188.226.172.25:3838/Ether-mining-profitability-calculator/dashboard/"><img src="https://raw.githubusercontent.com/fathomson/fathomson.github.io/master/assets/img/dashboard.PNG" width="300px" /></a>
 <br />
 The cryptocurrency Ethereum now reaches the news headlines on a daily basis. It has attracted a lot of new miners who often seek a way to earn a quick buck, but how profitable is the mining of this digital currency? To find out I walk you thought the steps I took to develop a profitability calculator dashboard. It consists out of two parts, the first part focusses on the data collection and preparation and in the second part I will handle the dashboard development.
 
-<h4 id="collect-data">Collect data</h4>
-The first step is to get the full ether block chain to collect the data from, so I downloaded and installed <a href="https://geth.ethereum.org/downloads/">geth</a>.
-
-<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="c1">#create account
-</span><span class="n">geth</span><span class="w"> </span><span class="n">account</span><span class="w"> </span><span class="n">new</span><span class="w">
-
-</span><span class="c1">#sync chain and start rpc
-</span><span class="n">geth</span><span class="w"> </span><span class="o">--</span><span class="n">rpc</span><span class="w"> </span><span class="o">--</span><span class="n">rpccorsdomain</span><span class="w"> </span><span class="n">localhost</span><span class="w"> </span><span class="o">--</span><span class="n">cache</span><span class="o">=</span><span class="m">1024</span></code></pre></figure>
-
-This took quite a while and you could speed it up by downloading a so-called backup file of the chain which are available online. While this process runs you can already start collecting block data. Do note that the full size of the chain currently is about 60GB and counting.
-
-<figure class="highlight"><pre><code class="language-r" data-lang="r"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38</pre></td><td class="code"><pre><span class="c1"># json rpc api functions.
-# thanks to: https://github.com/BSDStudios/ethr
-# json-rpc documentation: https://github.com/ethereum/wiki/wiki/JSON-RPC
-</span><span class="w">
-</span><span class="c1"># Returns the number of most recent block.
-</span><span class="n">eth_blockNumber</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">rpc_address</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"http://localhost:8545"</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
-  </span><span class="n">post_body</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="n">jsonrpc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"2.0"</span><span class="p">,</span><span class="w"> </span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"eth_blockNumber"</span><span class="p">,</span><span class="w"> </span><span class="n">params</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">83</span><span class="p">)</span><span class="w">
-  </span><span class="n">post_return</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">httr</span><span class="o">::</span><span class="n">POST</span><span class="p">(</span><span class="n">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rpc_address</span><span class="p">,</span><span class="w"> </span><span class="n">body</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">post_body</span><span class="p">,</span><span class="w"> </span><span class="n">encode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"json"</span><span class="p">)</span><span class="w">
-  </span><span class="n">post_content</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">httr</span><span class="o">::</span><span class="n">content</span><span class="p">(</span><span class="n">post_return</span><span class="p">,</span><span class="w"> </span><span class="n">as</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"parsed"</span><span class="p">)</span><span class="w">
-  </span><span class="n">block_number</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">post_content</span><span class="o">$</span><span class="n">result</span><span class="w">
-  </span><span class="nf">return</span><span class="p">(</span><span class="n">block_number</span><span class="p">)</span><span class="w">
-</span><span class="p">}</span><span class="w">
-
-</span><span class="c1"># Returns information about a block by block number.
-</span><span class="n">eth_getBlockByNumber</span><span class="w"> </span><span class="o">&lt;-</span><span class="k">function</span><span class="p">(</span><span class="n">block_number</span><span class="p">,</span><span class="w"> </span><span class="n">full_list</span><span class="p">,</span><span class="w"> </span><span class="n">rpc_address</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"http://localhost:8545"</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
-  </span><span class="n">block_number</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">as.character</span><span class="p">(</span><span class="n">block_number</span><span class="p">)</span><span class="w">
-  </span><span class="n">full_list</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">as.logical</span><span class="p">(</span><span class="n">full_list</span><span class="p">)</span><span class="w">
-  </span><span class="n">body</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="n">jsonrpc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"2.0"</span><span class="p">,</span><span class="w"> </span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"eth_getBlockByNumber"</span><span class="p">,</span><span class="w"> </span><span class="n">params</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="n">block_number</span><span class="p">,</span><span class="w"> </span><span class="n">full_list</span><span class="p">),</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">)</span><span class="w">
-  </span><span class="n">block_return</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">httr</span><span class="o">::</span><span class="n">POST</span><span class="p">(</span><span class="n">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rpc_address</span><span class="p">,</span><span class="w"> </span><span class="n">body</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">body</span><span class="p">,</span><span class="w"> </span><span class="n">encode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"json"</span><span class="p">)</span><span class="w">
-  </span><span class="n">block_dat</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">httr</span><span class="o">::</span><span class="n">content</span><span class="p">(</span><span class="n">block_return</span><span class="p">)</span><span class="o">$</span><span class="n">result</span><span class="w">
-  </span><span class="nf">return</span><span class="p">(</span><span class="n">block_dat</span><span class="p">)</span><span class="w">
-</span><span class="p">}</span><span class="w">
-
-</span><span class="c1"># Returns the receipt of a transaction by transaction hash.
-</span><span class="n">eth_getTransactionReceipt</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">transaction_hash</span><span class="p">,</span><span class="w"> </span><span class="n">rpc_address</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"http://localhost:8545"</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
-  </span><span class="n">body</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="n">jsonrpc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"2.0"</span><span class="p">,</span><span class="w"> </span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"eth_getTransactionReceipt"</span><span class="p">,</span><span class="w">  </span><span class="n">params</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="n">transaction_hash</span><span class="p">),</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">)</span><span class="w">
-  </span><span class="n">TransReceipt_return</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">httr</span><span class="o">::</span><span class="n">POST</span><span class="p">(</span><span class="n">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rpc_address</span><span class="p">,</span><span class="w"> </span><span class="n">body</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">body</span><span class="p">,</span><span class="w"> </span><span class="n">encode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"json"</span><span class="p">)</span><span class="w">
-  </span><span class="n">TransReceipt</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">httr</span><span class="o">::</span><span class="n">content</span><span class="p">(</span><span class="n">TransReceipt_return</span><span class="p">)</span><span class="o">$</span><span class="n">result</span><span class="w">
-  </span><span class="nf">return</span><span class="p">(</span><span class="n">TransReceipt</span><span class="p">)</span><span class="w">
-</span><span class="p">}</span><span class="w">
-
-</span><span class="c1"># Returns information about a uncle of a block by number and uncle index position.
-</span><span class="n">eth_getUncleByBlockNumberAndIndex</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">block_number</span><span class="p">,</span><span class="w"> </span><span class="n">index</span><span class="p">,</span><span class="w"> </span><span class="n">rpc_address</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"http://localhost:8545"</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
-  </span><span class="n">body</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="n">jsonrpc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"2.0"</span><span class="p">,</span><span class="w"> </span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"eth_getUncleByBlockNumberAndIndex"</span><span class="p">,</span><span class="w">  </span><span class="n">params</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="n">block_number</span><span class="p">,</span><span class="w"> </span><span class="n">index</span><span class="p">),</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">)</span><span class="w">
-  </span><span class="n">UncleBlock_return</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">httr</span><span class="o">::</span><span class="n">POST</span><span class="p">(</span><span class="n">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rpc_address</span><span class="p">,</span><span class="w"> </span><span class="n">body</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">body</span><span class="p">,</span><span class="w"> </span><span class="n">encode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"json"</span><span class="p">)</span><span class="w">
-  </span><span class="n">UncleBlock</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">httr</span><span class="o">::</span><span class="n">content</span><span class="p">(</span><span class="n">UncleBlock_return</span><span class="p">)</span><span class="o">$</span><span class="n">result</span><span class="w">
-  </span><span class="nf">return</span><span class="p">(</span><span class="n">UncleBlock</span><span class="p">)</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></pre></td></tr></tbody></table></code></pre></figure>
-
-<h4 id="transform-data">Transform data</h4>
-The data as received from the functions defined above is not directly suitable. It needs to be transformed and enriched in order to be of use. The functions below help us transforming the data.
-
-<figure class="highlight"><pre><code class="language-r" data-lang="r"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
-43
-44
-45
-46
-47
-48
-49
-50
-51</pre></td><td class="code"><pre><span class="c1"># hex -&gt; numeric
-</span><span class="n">getNumber</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">hex</span><span class="p">){</span><span class="w">
-  </span><span class="nf">class</span><span class="p">(</span><span class="n">hex</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s2">"numeric"</span><span class="w">
-  </span><span class="nf">return</span><span class="p">(</span><span class="nf">as.numeric</span><span class="p">(</span><span class="n">sprintf</span><span class="p">(</span><span class="s2">"%.0f"</span><span class="p">,</span><span class="n">hex</span><span class="p">)))</span><span class="w">
-</span><span class="p">}</span><span class="w">
-
-</span><span class="c1"># numeric -&gt; hex
-</span><span class="n">getHex</span><span class="w"> </span><span class="o">&lt;-</span><span class="w">  </span><span class="k">function</span><span class="p">(</span><span class="n">number</span><span class="p">){</span><span class="w">
-  </span><span class="nf">return</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="s2">"0x"</span><span class="p">,</span><span class="n">sprintf</span><span class="p">(</span><span class="s2">"%x"</span><span class="p">,</span><span class="n">number</span><span class="p">)))</span><span class="w">
-</span><span class="p">}</span><span class="w">
-
-</span><span class="c1"># Enrich block data with: uncle and transaction details.
-</span><span class="n">enrichETHblock</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">hexBlock</span><span class="p">){</span><span class="w">
-
-  </span><span class="c1"># default block reward, amount transactionfees and total ether of transactions in block.
-</span><span class="w">  </span><span class="n">blockReward</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">5</span><span class="w">
-  </span><span class="n">txFees</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">0</span><span class="w">
-  </span><span class="n">ethValue</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">0</span><span class="w">
-
-  </span><span class="c1"># sum all transactionfees
-</span><span class="w">  </span><span class="k">for</span><span class="p">(</span><span class="n">transaction</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">hexBlock</span><span class="o">$</span><span class="n">transactions</span><span class="p">){</span><span class="w">    
-    </span><span class="n">ethValue</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ethValue</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">getNumber</span><span class="p">(</span><span class="n">transaction</span><span class="o">$</span><span class="n">value</span><span class="p">)</span><span class="o">/</span><span class="m">1e18</span><span class="w">
-    </span><span class="n">tr</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">eth_getTransactionReceipt</span><span class="p">(</span><span class="n">transaction</span><span class="o">$</span><span class="n">hash</span><span class="p">)</span><span class="w">
-    </span><span class="k">if</span><span class="p">(</span><span class="nf">is.null</span><span class="p">(</span><span class="n">tr</span><span class="p">))</span><span class="w">
-      </span><span class="k">next</span><span class="w">
-    </span><span class="n">txFees</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">txFees</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">getNumber</span><span class="p">(</span><span class="n">tr</span><span class="o">$</span><span class="n">gasUsed</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="n">getNumber</span><span class="p">(</span><span class="n">transaction</span><span class="o">$</span><span class="n">gasPrice</span><span class="p">)</span><span class="o">/</span><span class="m">1e18</span><span class="p">)</span><span class="w">
-  </span><span class="p">}</span><span class="w">
-
-  </span><span class="c1"># sum total uncle rewards
-</span><span class="w">  </span><span class="n">uncleETH</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">0</span><span class="w">
-  </span><span class="k">for</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">0</span><span class="o">:</span><span class="m">1</span><span class="p">){</span><span class="w">
-    </span><span class="n">uncle</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">eth_getUncleByBlockNumberAndIndex</span><span class="p">(</span><span class="n">hexBlock</span><span class="o">$</span><span class="n">number</span><span class="p">,</span><span class="n">getHex</span><span class="p">(</span><span class="n">i</span><span class="p">))</span><span class="w">
-    </span><span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nf">is.null</span><span class="p">(</span><span class="n">uncle</span><span class="p">))</span><span class="w">
-      </span><span class="n">uncleETH</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">uncleETH</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">((</span><span class="m">8</span><span class="o">-</span><span class="p">(</span><span class="n">getNumber</span><span class="p">(</span><span class="n">hexBlock</span><span class="o">$</span><span class="n">number</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">getNumber</span><span class="p">(</span><span class="n">uncle</span><span class="o">$</span><span class="n">number</span><span class="p">)))</span><span class="o">/</span><span class="m">8</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">blockReward</span><span class="w">
-  </span><span class="p">}</span><span class="w">
-
-  </span><span class="c1"># miner reward for included uncle
-</span><span class="w">  </span><span class="n">minerRewardUncle</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">length</span><span class="p">(</span><span class="n">hexBlock</span><span class="o">$</span><span class="n">uncles</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="m">1</span><span class="o">/</span><span class="m">32</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">blockReward</span><span class="w">
-
-  </span><span class="c1"># wrap in dataframe
-</span><span class="w">  </span><span class="n">block</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data.frame</span><span class="p">(</span><span class="n">number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getNumber</span><span class="p">(</span><span class="n">hexBlock</span><span class="o">$</span><span class="n">number</span><span class="p">),</span><span class="w">
-                      </span><span class="n">timestamp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">as.POSIXct</span><span class="p">(</span><span class="n">getNumber</span><span class="p">(</span><span class="n">hexBlock</span><span class="o">$</span><span class="n">timestamp</span><span class="p">),</span><span class="w"> </span><span class="n">origin</span><span class="o">=</span><span class="s2">"1970-01-01"</span><span class="p">),</span><span class="w">
-                      </span><span class="n">difficulty</span><span class="o">=</span><span class="w">  </span><span class="n">getNumber</span><span class="p">(</span><span class="n">hexBlock</span><span class="o">$</span><span class="n">difficulty</span><span class="p">),</span><span class="w">
-                      </span><span class="n">txCount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">length</span><span class="p">(</span><span class="n">hexBlock</span><span class="o">$</span><span class="n">transactions</span><span class="p">),</span><span class="w">
-                      </span><span class="n">txEther</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ethValue</span><span class="p">,</span><span class="w">
-                      </span><span class="n">txFees</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">txFees</span><span class="p">,</span><span class="w">
-                      </span><span class="n">uncleETH</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">uncleETH</span><span class="p">,</span><span class="w">
-                      </span><span class="n">minerUncleReward</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">minerRewardUncle</span><span class="p">,</span><span class="w">
-                      </span><span class="n">totalETHreward</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">blockReward</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">txFees</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">minerRewardUncle</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">uncleETH</span><span class="p">)</span><span class="w">
-  </span><span class="nf">return</span><span class="p">(</span><span class="n">block</span><span class="p">)</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></pre></td></tr></tbody></table></code></pre></figure>
-
-<h4 id="save-data">Save data</h4>
-Ok, now we have collected the data and we can transform it into the format we want. The next step is saving the transformed data for our future analysis. I have chosen for a local instance of SQL to write the data to. If you do not have an instance of SQL on your machine download it and create a database add a table.  I have named my table eth_blocks and it can be created with the following statement:
-
-<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">eth_blocks</span><span class="p">(</span>
-	<span class="p">[</span><span class="n">number</span><span class="p">]</span> <span class="p">[</span><span class="n">int</span><span class="p">]</span> <span class="k">NULL</span><span class="p">,</span>
-	<span class="p">[</span><span class="k">timestamp</span><span class="p">]</span> <span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="k">NULL</span><span class="p">,</span>
-	<span class="p">[</span><span class="n">difficulty</span><span class="p">]</span> <span class="p">[</span><span class="n">bigint</span><span class="p">]</span> <span class="k">NULL</span><span class="p">,</span>
-	<span class="p">[</span><span class="n">txCount</span><span class="p">]</span> <span class="p">[</span><span class="n">int</span><span class="p">]</span> <span class="k">NULL</span><span class="p">,</span>
-	<span class="p">[</span><span class="n">txEther</span><span class="p">]</span> <span class="p">[</span><span class="n">decimal</span><span class="p">](</span><span class="mi">24</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span> <span class="k">NULL</span><span class="p">,</span>
-	<span class="p">[</span><span class="n">txFees</span><span class="p">]</span> <span class="p">[</span><span class="n">decimal</span><span class="p">](</span><span class="mi">24</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span> <span class="k">NULL</span><span class="p">,</span>
-	<span class="p">[</span><span class="n">uncleETH</span><span class="p">]</span> <span class="p">[</span><span class="n">decimal</span><span class="p">](</span><span class="mi">24</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span> <span class="k">NULL</span><span class="p">,</span>
-	<span class="p">[</span><span class="n">minerUncleReward</span><span class="p">]</span> <span class="p">[</span><span class="n">decimal</span><span class="p">](</span><span class="mi">24</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span> <span class="k">NULL</span><span class="p">,</span>
-	<span class="p">[</span><span class="n">totalETHreward</span><span class="p">]</span> <span class="p">[</span><span class="n">decimal</span><span class="p">](</span><span class="mi">24</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span> <span class="k">NULL</span>
-<span class="p">)</span></code></pre></figure>
-
-Once the table is created we need to be able to write the data from R into SQL. The are two beautiful R libraries available to help us achieve that namely:
-
-<figure class="highlight"><pre><code class="language-r" data-lang="r"><span class="n">library</span><span class="p">(</span><span class="n">RODBC</span><span class="p">)</span><span class="w">
-</span><span class="n">library</span><span class="p">(</span><span class="n">RODBCext</span><span class="p">)</span><span class="w"> </span><span class="c1"># parameterizes queries
-</span><span class="w">
-</span><span class="c1"># Define an ODBC datasource and you can easily connect to your database
-</span><span class="n">dbHandle</span><span class="w"> </span><span class="o">&lt;-</span><span class="n">odbcConnect</span><span class="p">(</span><span class="s2">"[database-name]"</span><span class="p">)</span></code></pre></figure>
-
-Once everything is set up we can start the script that actually collects the data, transforms it and finally saves it into the database.
-
-<figure class="highlight"><pre><code class="language-r" data-lang="r"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
-43
-44
-45
-46
-47
-48
-49
-50
-51
-52
-53
-54
-55
-56
-57
-58
-59
-60
-61
-62
-63
-64
-65
-66
-67
-68
-69</pre></td><td class="code"><pre><span class="c1"># script start time
-</span><span class="n">start.time</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">Sys.time</span><span class="p">()</span><span class="w">
-
-</span><span class="c1"># create database handle ODBS data source
-</span><span class="n">dbHandle</span><span class="w"> </span><span class="o">&lt;-</span><span class="n">odbcConnect</span><span class="p">(</span><span class="s2">"ethereum"</span><span class="p">)</span><span class="w">
-
-</span><span class="c1"># get the latest block in database
-</span><span class="n">maxBlockInDB</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">sqlQuery</span><span class="p">(</span><span class="n">dbHandle</span><span class="p">,</span><span class="w"> </span><span class="s2">"select top 1 number from eth_blocks order by number desc"</span><span class="p">)</span><span class="w">
-</span><span class="n">maxBlockInDB</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">as.numeric</span><span class="p">(</span><span class="n">maxBlockInDB</span><span class="p">)</span><span class="w">
-
-</span><span class="c1"># when no block is found, assume that there are no block in the db yet
-</span><span class="k">if</span><span class="p">(</span><span class="nf">is.na</span><span class="p">(</span><span class="n">maxBlockInDB</span><span class="p">[</span><span class="m">1</span><span class="p">]))</span><span class="w">
-  </span><span class="n">maxBlockInDB</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">0</span><span class="w">
-
-</span><span class="c1"># start block is latest block in db + 1
-</span><span class="n">startBlock</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">maxBlockInDB</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="w">
-
-</span><span class="c1"># stop block is last block in chain
-</span><span class="n">stopBlock</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">getNumber</span><span class="p">(</span><span class="n">eth_blockNumber</span><span class="p">())</span><span class="w">
-
-</span><span class="c1"># blocks that will be added in this session. 1 when stopblock and startblok are equal.
-</span><span class="n">print</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="s2">"Starting update operation, blocks to add: : "</span><span class="p">,</span><span class="n">stopBlock</span><span class="w"> </span><span class="o">-</span><span class="n">maxBlockInDB</span><span class="w"> </span><span class="p">))</span><span class="w">
-
-</span><span class="c1"># get new blocks from chain and write to database    
-</span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">startBlock</span><span class="o">:</span><span class="n">stopBlock</span><span class="p">){</span><span class="w">
-  </span><span class="c1"># get block i from chain
-</span><span class="w">  </span><span class="n">block</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">eth_getBlockByNumber</span><span class="p">(</span><span class="n">getHex</span><span class="p">(</span><span class="n">i</span><span class="p">),</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w">
-  </span><span class="k">if</span><span class="p">(</span><span class="nf">is.null</span><span class="p">(</span><span class="n">block</span><span class="p">))</span><span class="w">
-    </span><span class="k">break</span><span class="w">
-
-  </span><span class="c1"># convert to database format and save in database.
-</span><span class="w">  </span><span class="n">rBlock</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">enrichETHblock</span><span class="p">(</span><span class="n">block</span><span class="p">)</span><span class="w">
-  </span><span class="n">RODBCext</span><span class="o">::</span><span class="n">sqlExecute</span><span class="p">(</span><span class="n">dbHandle</span><span class="p">,</span><span class="w"> </span><span class="s2">"INSERT INTO eth_blocks VALUES (?,?,?,?,?,?,?,?,?)"</span><span class="p">,</span><span class="w"> </span><span class="n">rBlock</span><span class="p">)</span><span class="w">
-
-  </span><span class="c1"># once every 500 blocks show status messuge
-</span><span class="w">  </span><span class="k">if</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">%%</span><span class="w"> </span><span class="m">500</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">1</span><span class="p">){</span><span class="w">
-    </span><span class="n">end.time</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">Sys.time</span><span class="p">()</span><span class="w">
-    </span><span class="n">time.taken</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">end.time</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start.time</span><span class="w">
-    </span><span class="n">print</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="s2">"Current block : "</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="s2">" Operation took:"</span><span class="p">,</span><span class="w"> </span><span class="nf">as.numeric</span><span class="p">(</span><span class="n">time.taken</span><span class="p">)</span><span class="w">   </span><span class="p">))</span><span class="w">
-    </span><span class="n">start.time</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">Sys.time</span><span class="p">()</span><span class="w">
-  </span><span class="p">}</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span><span class="c1"># when done show status message again.
-</span><span class="n">print</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="s2">"Done! added: : "</span><span class="p">,</span><span class="n">stopBlock</span><span class="w"> </span><span class="o">-</span><span class="n">maxBlockInDB</span><span class="p">,</span><span class="s2">" blocks"</span><span class="w"> </span><span class="p">))</span><span class="w">
-
-</span><span class="c1"># when done retrieve all blocks from the database
-</span><span class="n">allBlocks</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">sqlQuery</span><span class="p">(</span><span class="n">dbHandle</span><span class="p">,</span><span class="w"> </span><span class="s2">"select * from eth_blocks order by number asc"</span><span class="p">)</span><span class="w">
-
-</span><span class="c1"># aggregate block data
-</span><span class="n">dailyDifficulty</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">allBlocks</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
-  </span><span class="n">dplyr</span><span class="o">::</span><span class="n">mutate</span><span class="p">(</span><span class="n">toTimestamp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dplyr</span><span class="o">::</span><span class="n">lead</span><span class="p">(</span><span class="n">timestamp</span><span class="p">))</span><span class="w">   </span><span class="o">%&gt;%</span><span class="w">
-  </span><span class="n">dplyr</span><span class="o">::</span><span class="n">mutate</span><span class="p">(</span><span class="n">duration</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">as.numeric</span><span class="p">(</span><span class="n">difftime</span><span class="p">(</span><span class="n">toTimestamp</span><span class="p">,</span><span class="n">timestamp</span><span class="p">,</span><span class="w"> </span><span class="n">units</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"secs"</span><span class="p">)))</span><span class="w">   </span><span class="o">%&gt;%</span><span class="w">
-  </span><span class="n">dplyr</span><span class="o">::</span><span class="n">mutate</span><span class="p">(</span><span class="n">weigthedDifficulty</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">difficulty</span><span class="o">*</span><span class="n">duration</span><span class="p">)</span><span class="w">   </span><span class="o">%&gt;%</span><span class="w">
-  </span><span class="n">dplyr</span><span class="o">::</span><span class="n">group_by</span><span class="p">(</span><span class="n">Day</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">as.Date</span><span class="p">(</span><span class="n">format</span><span class="p">(</span><span class="n">as.Date</span><span class="p">(</span><span class="n">timestamp</span><span class="p">,</span><span class="w"> </span><span class="s2">"%d/%m/%Y"</span><span class="p">))))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
-  </span><span class="n">dplyr</span><span class="o">::</span><span class="n">summarise</span><span class="p">(</span><span class="n">netHash</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">sum</span><span class="p">(</span><span class="n">weigthedDifficulty</span><span class="p">)</span><span class="o">/</span><span class="nf">sum</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">mean</span><span class="p">(</span><span class="n">duration</span><span class="p">),</span><span class="w">
-                   </span><span class="n">avgBlocktime</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mean</span><span class="p">(</span><span class="n">duration</span><span class="p">),</span><span class="w">
-                   </span><span class="n">ethFromBlocks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="p">()</span><span class="o">*</span><span class="m">5</span><span class="p">,</span><span class="w">
-                   </span><span class="n">ethFromUnclesForMiner</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">sum</span><span class="p">(</span><span class="n">uncleETH</span><span class="p">),</span><span class="w">
-                   </span><span class="n">ethFromUnclesForIncluder</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">sum</span><span class="p">(</span><span class="n">minerUncleReward</span><span class="p">),</span><span class="w">
-                   </span><span class="n">ethFromtxFees</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">sum</span><span class="p">(</span><span class="n">txFees</span><span class="p">),</span><span class="w">
-                   </span><span class="n">ethTotal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">sum</span><span class="p">(</span><span class="n">ethFromBlocks</span><span class="p">,</span><span class="n">ethFromUnclesForMiner</span><span class="p">,</span><span class="n">ethFromUnclesForIncluder</span><span class="p">,</span><span class="n">ethFromtxFees</span><span class="p">))</span><span class="w">
-
-</span><span class="c1"># RStudio filedir
-# write to dashboard dir
-</span><span class="n">dir</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">dirname</span><span class="p">(</span><span class="n">rstudioapi</span><span class="o">::</span><span class="n">getActiveDocumentContext</span><span class="p">()</span><span class="o">$</span><span class="n">path</span><span class="p">)</span><span class="w">
-</span><span class="n">saveRDS</span><span class="p">(</span><span class="n">dailyDifficulty</span><span class="p">,</span><span class="w"> </span><span class="n">paste0</span><span class="p">(</span><span class="n">dir</span><span class="p">,</span><span class="w"> </span><span class="s2">"/dashboard/data/daily.Rda"</span><span class="p">))</span><span class="w">
-
-</span><span class="c1"># clode db connection
-</span><span class="n">odbcCloseAll</span><span class="p">()</span><span class="w">
-</span></pre></td></tr></tbody></table></code></pre></figure>
-
-As you notice in the end I save the aggregated data file (daily.Rda) in a separate folder. This data file will be used for our dashboard which I discuss in part 2.
-
-<h5 id="useful-links">Useful links</h5>
-<a href="https://github.com/fathomson/Ether-mining-profitability-calculator">Project source code</a><br />
-<a href="https://github.com/fathomson/Ether-mining-profitability-calculator/issues">Report issues</a><br />
-<a href="https://www.linkedin.com/in/fathomson/">Questions/contact</a>
 </p>
       </div>
       <div class="card-action">
@@ -475,47 +133,8 @@ As you notice in the end I save the aggregated data file (daily.Rda) in a separa
           <i class="material-icons">date_range</i>
           12/07/2017 12:30
         </p>
-        <p id="post-content"><a href="https://ethereum.shinyapps.io/dashboard/">Directly go to dashboard</a>
+        <p id="post-content"><a href="http://188.226.172.25:3838/Ether-mining-profitability-calculator/dashboard/">Directly go to dashboard</a>
 
-<img src="https://raw.githubusercontent.com/fathomson/fathomson.github.io/master/assets/img/dashboard.PNG" width="100%" />
-
-<h3 id="introduction">Introduction</h3>
-A long time ago I purchased a Butterfly Labs rig to mine Bitcoin. During that time I lived in a student house for which the rent included energy costs. This seemed like a perfect deal and a quick calculation showed that I would earn my investment back in just a matter of weeks. However, at that point the difficulty started to increase significantly and each day that passed shifted my break even date with two days. For this you do not need to be an economist to see that the break even date would never come. So after a while I decided to sell the mining rig and just invest it in bitcoin.
-
-You will probably think, why is this guy talking about bitcoin while the title clearly states ether, well that is because of the following: since a few months ether is on a daily bases in the news. Some articles are about the recent price increase or about the opportunities and risks and even some about mining. And the articles about mining and cloud mining triggered me to build a reliable ether mining profitability calculator. As with the bitcoin story there are mining profitability calculators available, however these work with fixed or simple difficulty values. And with the current growth in net hash rate basically all these profitability calculators provide a too rosy image. That is why I build a profitability calculator which, based on the predicted net hash rate and daily ether to miner rewards, provides a realistic view of your investment returns.
-
-This post describes the steps I took to create the calculator and how you can use it.
-
-<h3 id="data-collection-and-preparation">Data collection and preparation</h3>
-<a href="https://github.com/fathomson/Ether-mining-profitability-calculator/blob/master/data_prep.R">Source data collection</a>
-To be able to predict the net hash rate and daily ether to miners I needed data. I ran a quick search on google but could not find a recent full dump of the ether chain, which made me decide to collect it myself. To do this I downloaded geth and started the ether chain synchronization process. It took a while to get the 4M+ blocks but once I had them I could start the data collection. With the command below I started a local instance of the rpc client which enabled me to very quickly communicate with the chain. I used R to retrieve the block data from the chain and saved it to sql with R as well.
-
-<figure class="highlight"><pre><code class="language-cmd" data-lang="cmd">geth --rpc --rpccorsdomain localhost</code></pre></figure>
-
-<h5 id="net-hash-rate">Net hash rate</h5>
-The net hash rate is the total hash rate of the network. A prediction of this value is important because the percentage of your attribution determines the number of ethers you get in a specific period. The block timestamp and difficulty are of interest for estimating the net hash rate. I divided the weighted difficulty (block difficulty * block time) by the mean block time for all blocks on a day to get an estimate of that days net hash rate. There might be  other ways to do this but for this application this works. Each day there are between 25.000 and 40.000 new blocks which provides sufficient data to do it this way.
-
-<h5 id="daily-ether-to-miners">Daily ether to miners</h5>
-This is the total amount of ether rewarded to all the miners per day. As a miner you can ether in several different ways, see this list below which includes all of the ways to earn ether:
-<ul>
-  <li>5 ether for a block found</li>
-  <li>4.375 to 1.25 with steps of .625 depending where the uncle is included ((U_n + 8 - B_n) * R / 8).</li>
-  <li>0.15625 for a found uncle block (1/32 * 5)</li>
-  <li>transactions fees
-The total ether rewarded to the miners is between 5 and 14 ether, there are some exceptions though. i.e. block number 2770908 which has a total of 766 ether. If you are interested have a look at <a href="https://github.com/fathomson/Ether-mining-profitability-calculator/blob/master/dashboard/data/top30_block_eth_rewards.csv">30 biggest blockrewards</a>.</li>
-</ul>
-
-<h3 id="the-dashboard">The dashboard</h3>
-The data collection and preparation was done in R as well as the forecasting and visualizations. These however where not production ready yet and needed additional work. Recently I came across <a href="https://www.shinyapps.io/">shinyapps.io</a>, a relatively simple tool to create well looking dashboards in R and wanted to give it a go. It went quicker then I thought and within no time I had published my calculator/dashboard on shinyapp.io, see <a href="https://ethereum.shinyapps.io/dashboard/">Ether mining profitability calculator</a>.
-
-<h5 id="how-do-i-use-the-calculatordashboard">How do I use the calculator/dashboard?</h5>
-The dashboard is divided in two sections, an input section at the left and tabs with output on the middle/right. In the input section you can enter your hashrate and investment cost. Click on ‘Show advanced options’ to change the days to forecast, date of investment, ether sell price, energy consumption and energy price. If you are a cloud miner you can set the energy price to 0. Based on the values you provided this app calculates the expected ROI and ether mined after the forecasted period. You can use the chart to see your returns at an earlier date. You can zoom in by selecting a specific period in the chart, double clicking resets your zoom.<br />
-In the output sections you can see three tabs: ROI, Net hash rate forecast and Daily ether to miners. The ROI (return on invesment) tab shows the rate at which you are earning money. The net hash rate forecast tab show you a forecast of the predicted future hashrate. The daily ether to miners tab show you the predicted amount of ether which is rewarded to the miners.
-
-<h5 id="useful-links">Useful links</h5>
-<a href="https://github.com/fathomson/Ether-mining-profitability-calculator">Project source code</a><br />
-<a href="https://github.com/fathomson/Ether-mining-profitability-calculator/issues">Report issues</a><br />
-<a href="https://www.linkedin.com/in/fathomson/">Questions/contact</a>
 </p>
       </div>
       <div class="card-action">
@@ -566,7 +185,7 @@ In the output sections you can see three tabs: ROI, Net hash rate forecast and D
       </div>
       <div class="footer-copyright">
         <div class="container">
-          &#xA9; 2017 Technical blog about R, block chain and more. All rights reserved. Theme by <a href="https://github.com/ShawnTeoh/matjek">MatJek</a>.
+          &#xA9; 2018 Technical blog about R, block chain and more. All rights reserved. Theme by <a href="https://github.com/ShawnTeoh/matjek">MatJek</a>.
         </div>
       </div>
     </footer>
